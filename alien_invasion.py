@@ -36,6 +36,7 @@ class AlienInvasion:
             self._check_events()
             self.ship.update()
             self._update_bullets()
+            self._update_aliens()
             self._update_screen()
 
             # Showing of the last painted screen
@@ -86,6 +87,15 @@ class AlienInvasion:
                 self.bullets.remove(bullet)
             # debug
             # print(len(self.bullets))
+
+    def _update_aliens(self):
+        
+        """Check if fleet reaches the edge of the screen 
+        and update positions of all aliens"""
+        self._check_fleet_edges()
+
+        """Update positions of all alins of fleet"""
+        self.aliens.update()
             
     def _create_fleet(self):
         """Building an invasion fleet."""
@@ -115,6 +125,19 @@ class AlienInvasion:
         alien.rect.x = alien.x
         alien.rect.y = alien.rect.height + 2 * alien.rect.height * row_number
         self.aliens.add(alien)
+
+    def _check_fleet_edges(self):
+        """Reacts when alien reaches the edge of the screen"""
+        for alien in self.aliens.sprites():
+            if alien.check_edges():
+                self._change_fleet_direction() # _
+                break
+
+    def _change_fleet_direction(self):
+        """Sinks the entire fleet and change its direction"""
+        for alien in self.aliens.sprites():
+            alien.rect.y += self.settings.fleet_drop_speed
+        self.settings.fleet_direction *= -1
 
     def _update_screen(self):
         # Reload the image on the screen and load new screen
