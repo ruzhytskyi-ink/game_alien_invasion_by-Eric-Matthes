@@ -39,9 +39,12 @@ class AlienInvasion:
         """Run main game cycle"""
         while True:
             self._check_events()
-            self.ship.update()
-            self._update_bullets()
-            self._update_aliens()
+
+            if self.stats.game_active:
+                self.ship.update()
+                self._update_bullets()
+                self._update_aliens()
+            
             self._update_screen()
 
             # Showing of the last painted screen
@@ -169,8 +172,11 @@ class AlienInvasion:
 
     def _ship_hit(self):
         """Handles a collision between ship and alien"""
-        # decreasing of ship_left
-        self.stats.ships_left -= 1
+        if self.stats.ships_left > 0:
+            # decreasing of ship_left
+            self.stats.ships_left -= 1
+        else:
+            self.stats.game_active = False
 
         # clear a list of aliens and bullets
         self.aliens.empty()
