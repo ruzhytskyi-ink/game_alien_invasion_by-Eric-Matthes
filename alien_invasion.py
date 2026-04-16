@@ -4,6 +4,7 @@ from time import sleep
 
 from settings import Settings
 from game_stats import GameStats
+from scoreboard import Scoreboard
 from button import Button
 from ship import Ship
 from bullet import Bullet
@@ -28,7 +29,9 @@ class AlienInvasion:
         pygame.display.set_caption("Alien Invasion")
 
         # Creating an instance to store game stats
+        # and panel of results
         self.stats = GameStats(self)
+        self.sb = Scoreboard(self)
 
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
@@ -79,6 +82,9 @@ class AlienInvasion:
             # reset game statistacs
             self.stats.reset_stats()         
             self.stats.game_active = True
+            self.sb.prep_score()
+            self.sb.prep_level()
+            self.sb.prep_ships()
 
             # clean the lists of aliens and bullets
             self.aliens.empty()
@@ -139,12 +145,23 @@ class AlienInvasion:
         collisions = pygame.sprite.groupcollide(
             self.bullets, self.aliens, True, True)
         
+        if collisions:
+            for aliens in collisions.values():
+                self.stats.score += self.settings.alien_points * len(aliens)
+            self.sb.prep_score()
+            self.sb.check_high_score() 
+
         if not self.aliens:
             # destroing current bullets, speed increasing
             # and creating of the new fleet
             self.bullets.empty()
             self._create_fleet()  
-            self.settings.increase_speed()  
+            self.settings.increase_speed()
+
+            # Increasing of level
+            self.stats.level += 1
+            self.sb.prep_level()
+             
 
     def _create_alien(self, alien_number, row_number):
         """creating of alien and setting its in the row"""
@@ -208,6 +225,7 @@ class AlienInvasion:
         if self.stats.ships_left > 0:
             # decreasing of ship_left
             self.stats.ships_left -= 1
+            self.sb.prep_ships()
         else:
             self.stats.game_active = False
             pygame.mouse.set_visible(True)
@@ -221,7 +239,7 @@ class AlienInvasion:
         self.ship.center_ship()
 
         # pause
-        sleep(0.5)
+        sleep(1)
 
     def _check_aliens_botoom(self):
         """Check if alien reaches the botoom"""
@@ -239,6 +257,9 @@ class AlienInvasion:
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
         self.aliens.draw(self.screen)
+
+        # display score details
+        self.sb.show_score()
 
         # Play button apeares if game  is inactive
         if not self.stats.game_active:
