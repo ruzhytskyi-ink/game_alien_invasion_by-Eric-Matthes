@@ -17,6 +17,7 @@ Arrows keys (left - right)
 Move the ship left / right
 ⚔ Let's play
 Cloning the Repository
+
 $ git clone https://github.com/ruzhytskyi-ink/game_alien_invasion_by-Eric-Matthes.git
 
 $ cd alien_invasion
