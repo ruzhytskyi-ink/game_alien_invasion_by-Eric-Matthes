@@ -24,3 +24,7 @@ $ cd alien_invasion
 Running
 $ python alien_invasion.py
 Enjoy!
+
+Alarm!
+Need to make refactoring and can see how to do it at the similar project at the link:
+https://github.com/bryanmacgo/Alien-Invasion
